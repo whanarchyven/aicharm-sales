@@ -100,7 +100,7 @@ export default function Home() {
                     <div className={'grid w-full mt-5 items-start justify-center relative grid-cols-3 gap-4'}>
                         <div className={'flex flex-col gap-2 items-center'}>
                             <p className={'font-bold text-center text-white text-2xl'}>Step 1</p>
-                            <p className={'font-light text-center text-white '}>Upload managers' call recordings and connect <br/> them to your CRM system.</p>
+                            <p className={'font-light text-center text-white '}>Upload managers`&apos;` call recordings and connect <br/> them to your CRM system.</p>
                         </div>
                         <div className={'flex flex-col gap-2 items-center'}>
                             <p className={'font-bold text-center text-white text-2xl'}>Step 2</p>
@@ -188,7 +188,7 @@ export default function Home() {
                         </div>
                         <div className={'flex flex-col items-center w-full gap-5'}>
                             <img className={'w-20 aspect-square'} src={'/icons/features2.svg'}/>
-                            <p className={'text-center text-lg font-light'}><span className={'font-bold'}>Assessment of manager suitability for specific roles:</span><br/> Determining a manager's suitability for a particular direction or task.</p>
+                            <p className={'text-center text-lg font-light'}><span className={'font-bold'}>Assessment of manager suitability for specific roles:</span><br/> Determining a manager`&apos;`s suitability for a particular direction or task.</p>
                         </div>
                         <div className={'flex flex-col items-center w-full gap-5'}>
                             <img className={'w-20 aspect-square'} src={'/icons/features3.svg'}/>
@@ -203,7 +203,7 @@ export default function Home() {
                         </div>
                         <div className={'flex flex-col items-center w-full gap-5'}>
                             <img className={'w-20 aspect-square'} src={'/icons/features5.svg'}/>
-                            <p className={'text-center text-lg font-light'}><span className={'font-bold'}>Identification of your audience's psychotype:</span><br/> Determining the psychological profile of your audience.</p>
+                            <p className={'text-center text-lg font-light'}><span className={'font-bold'}>Identification of your audience`&apos;`s psychotype:</span><br/> Determining the psychological profile of your audience.</p>
                         </div>
                     </div>
                 </div>
