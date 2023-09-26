@@ -6,13 +6,13 @@ const Navbar = () => {
 
     const links=[
         {
-            name:'Соглашение \n' +
-                'о конфиденциальности',
+            name:'Confidentiality \n' +
+                'agreement',
             link:'/'
         },
         {
-            name:'Политика \n' +
-                'использования данных',
+            name:'Data usage \n' +
+                'policy',
             link:'/'
         },
     ]
