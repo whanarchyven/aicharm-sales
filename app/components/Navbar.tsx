@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import Link from "next/link";
 import Button from "@/app/components/UI/Button";
 import {classList} from "@/app/helpers/classList";
+import {usePathname} from "next/navigation";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +35,8 @@ const Navbar = () => {
         },
     ]
 
+    const pathname=usePathname();
+
     return (
         <div
             className={classList('bg-black fixed z-50 left-0 top-0 py-2 sm:py-8 sm:px-12 flex flex-col items-center w-full', isOpen ? 'h-full' : 'h-12 sm:h-auto justify-center')}>
@@ -43,15 +46,17 @@ const Navbar = () => {
                         <img src={'/logo.svg'}/>
                     </Link>
                     {links.map((link) => {
-                        return (
-                            <Link key={link.name} className={'text-white text-lg whitespace-nowrap font-extralight'}
-                                  href={link.link}>
-                                {link.name}
-                            </Link>
-                        )
+                        if(pathname=='/'){
+                            return (
+                                <Link key={link.name} className={'text-white text-lg whitespace-nowrap font-extralight'}
+                                      href={link.link}>
+                                    {link.name}
+                                </Link>
+                            )
+                        }
                     })}
                 </div>
-                <Button shadow>Try demo</Button>
+                {pathname=='/'?<Button shadow>Try demo</Button>:null}
             </div>
             <div className={'flex w-full justify-between items-start sm:hidden px-[20px]'}>
                 <img className={'w-32'} src={'/logo.svg'}/>
