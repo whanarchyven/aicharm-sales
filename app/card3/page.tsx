@@ -206,7 +206,7 @@ export default function Home() {
                                     <div className={'w-[7%] flex justify-start'}>
                                         <img className={'w-full aspect-square'} src={'/card/icons/client.svg'}/>
                                     </div>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client Profile and
+                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Managers Profile and
                                         State:</p>
                                 </div>
                                 <div className={'flex pl-[7%] flex-col'}>
