@@ -18,7 +18,7 @@ export default function Home() {
                             client service & sales <br/>
                             <span className={'text-orange'}>using AI</span></p>
                         <p className={'text-white font-extralight text-sm sm:text-xl font-inter'}>Our voice and text recognition technology allows you to analyze customers and sales managers, providing you with valuable insights to optimize your business.</p>
-                        <Button className={'mt-5 sm:text-2xl'} shadow>Try for free</Button>
+                        <Button className={'mt-5 sm:text-2xl'} shadow><a href={'#form'}>Try for free</a></Button>
                     </div>
                     <div className={'sm:col-end-13 sm:col-span-7 my-6 sm:my-0 relative flex items-center justify-center'}>
                         <img src={'/main_tabs_eng.svg'}/>
@@ -32,6 +32,7 @@ export default function Home() {
             {/*ВТОРОЙ БЛОК*/}
 
             <div className={'w-full py-12 bg-white flex justify-center items-center px-[20px] sm:px-12 relative'}>
+                <a className={'absolute -top-28'} id={'try'}></a>
                 <div className={'w-full flex flex-col gap-10 sm:max-w-[1440px]'}>
                     <p className={'font-bold text-center text-black text-3xl sm:text-4xl'}>Try right now</p>
                     <div className={'grid grid-cols-1 sm:grid-cols-2 gap-12'}>
@@ -53,7 +54,7 @@ export default function Home() {
                                 <Button shadow className={'sm:w-1/2'}>
                                     <div className={'flex items-center justify-center gap-4'}>
                                         <img src={'/icons/download.svg'}/>
-                                        <p className={' text-white'}>Drop audio file</p>
+                                        <a href={'#form'} className={' text-white'}>Drop audio file</a>
                                     </div>
                                 </Button>
                             </div>
@@ -67,7 +68,7 @@ export default function Home() {
                                 <Button shadow className={'sm:w-1/2'}>
                                     <div className={'flex items-center justify-center gap-4'}>
                                         <img src={'/icons/speak.svg'}/>
-                                        <p className={' text-white'}>Try</p>
+                                        <a href={'#form'} className={' text-white'}>Try</a>
                                     </div>
                                 </Button>
                             </div>
@@ -79,7 +80,7 @@ export default function Home() {
                             <Button shadow className={'w-1/2'}>
                                 <div className={'flex items-center justify-center gap-4'}>
                                     <img src={'/icons/download.svg'}/>
-                                    <p className={'text-white'}>Drop audio file</p>
+                                    <a href={'#form'} className={'text-white'}>Drop audio file</a>
                                 </div>
                             </Button>
                         </div>
@@ -88,7 +89,7 @@ export default function Home() {
                             <Button shadow className={'w-1/2'}>
                                 <div className={'flex items-center justify-center gap-4'}>
                                     <img src={'/icons/speak.svg'}/>
-                                    <p className={'text-white'}>Try</p>
+                                    <a href={'#form'} className={'text-white'}>Try</a>
                                 </div>
                             </Button>
                         </div>
@@ -99,6 +100,7 @@ export default function Home() {
             {/*ТРЕТИЙ БЛОК*/}
 
             <div className={'w-full flex justify-center items-center px-[20px] sm:h-[700px] sm:px-12 bg-[url("/main_bg.svg")] bg-cover relative'}>
+                <a className={'absolute -top-28'} id={'hiw'}></a>
                 <div className={'w-full h-full py-12 flex flex-col gap-3 justify-center items-center sm:max-w-[1440px]'}>
                     <p className={'text-2xl sm:text-5xl mb-20 font-bold text-white'}>How it works</p>
                     <div className={'grid w-full items-center justify-center place-items-center relative grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4'}>
@@ -151,7 +153,8 @@ export default function Home() {
 
             {/*ЧЕТВЕРТЫЙ БЛОК*/}
 
-            <div className={'bg-white flex justify-center py-12'}>
+            <div className={'bg-white flex justify-center relative py-12'}>
+                <a className={'absolute -top-28'} id={'cases'}></a>
                 <div className={'w-full flex justify-center px-[20px] sm:px-12 items-center py-12 flex-col gap-10 sm:max-w-[1440px]'}>
                     <p className={'text-2xl sm:text-5xl text-center font-bold text-black'}>Review success stories of our clients who have achieved significant growth thanks to AICharm Sales</p>
                     {/*<p className={'text-xl text-center font-normal text-black'}>Просмотрите истории успеха наших клиентов, которые достигли <br/> значительного роста благодаря AICharm Sales</p>*/}
@@ -212,7 +215,8 @@ export default function Home() {
 
             {/*ШЕСТОЙ БЛОК*/}
 
-            <div className={'bg-white flex justify-center py-12'}>
+            <div className={'bg-white flex justify-center relative py-12'}>
+                <a className={'absolute -top-28'} id={'advantages'}></a>
                 <div className={'w-full flex justify-center px-[20px] sm:px-12 items-center py-12 flex-col gap-10 sm:max-w-[1440px]'}>
                     <p className={'sm:text-5xl  text-2xl text-center font-bold text-black'}>The key advantages <br/> of AICharm Sales include:</p>
                     <div className={'grid grid-cols-1 sm:grid-cols-3 mt-16 sm:w-4/5 gap-20 items-start'}>
@@ -246,7 +250,8 @@ export default function Home() {
 
             {/*СЕДЬМОЙ БЛОК*/}
 
-            <div className={'w-full py-20 flex justify-center items-center bg-center px-[20px] sm:px-12 bg-[url("/form_bg.svg")] bg-cover relative'}>
+            <div className={'w-full py-20 flex justify-center items-center bg-center  px-[20px] sm:px-12 bg-[url("/form_bg.svg")] bg-cover relative'}>
+                <a className={'absolute -top-28'} id={'form'}></a>
                 <div className={'w-full h-full grid grid-cols-1 sm:grid-cols-2 gap-32 items-center sm:max-w-[1440px]'}>
                     <div className={'w-full flex items-center justify-center'}>
                         <Form></Form>

@@ -1,9 +1,10 @@
+"use client"
 import React from 'react';
 import {classList} from "@/app/helpers/classList";
 
 const Button = (props: any) => {
     return (
-        <div className={classList('relative',props.className?props.className:'')}>
+        <div onClick={props.onClick?props.onClick:()=>{}} className={classList('relative',props.className?props.className:'')}>
             {props.shadow ? <div
                 className={'absolute transition-all animate-pulse left-0 top-0 w-full h-full bg-orange rounded-full z-[0] blur-xl '}>
             </div>:null}

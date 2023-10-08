@@ -11,27 +11,27 @@ const Navbar = () => {
     const links = [
         {
             name: 'About Us',
-            link: '/'
+            link: '#main'
         },
         {
             name: 'Advantages',
-            link: '/'
+            link: '#advantages'
         },
         {
             name: 'How it works',
-            link: '/'
+            link: '#hiw'
         },
         {
             name: 'Try beta',
-            link: '/'
+            link: '#try'
         },
         {
             name: 'Cases',
-            link: '/'
+            link: '#cases'
         },
         {
             name: 'Contact Us',
-            link: '/'
+            link: '#form'
         },
     ]
 
@@ -48,7 +48,7 @@ const Navbar = () => {
                     {links.map((link) => {
                         if(pathname=='/'){
                             return (
-                                <Link key={link.name} className={'text-white text-lg whitespace-nowrap font-extralight'}
+                                <Link key={link.name} className={'text-white scroll-smooth text-lg whitespace-nowrap font-extralight'}
                                       href={link.link}>
                                     {link.name}
                                 </Link>
@@ -56,7 +56,7 @@ const Navbar = () => {
                         }
                     })}
                 </div>
-                {pathname=='/'?<Button shadow>Try demo</Button>:null}
+                {pathname=='/'?<Button shadow><a href={'#form'}>Try demo</a></Button>:null}
             </div>
             <div className={'flex w-full justify-between items-start sm:hidden px-[20px]'}>
                 <img className={'w-32'} src={'/logo.svg'}/>
@@ -68,13 +68,13 @@ const Navbar = () => {
                 <div className={'flex w-full px-[20px] mt-12 flex-col gap-12'}>
                     {links.map((link) => {
                         return (
-                            <Link key={link.name} className={'text-white text-2xl whitespace-nowrap font-extralight'}
+                            <Link onClick={()=>{setIsOpen(false)}} key={link.name} className={'text-white scroll-smooth text-2xl whitespace-nowrap font-extralight'}
                                   href={link.link}>
                                 {link.name}
                             </Link>
                         )
                     })}
-                    <Button shadow>Try demo</Button>
+                    <Button shadow><a href={'#form'}>Try demo</a></Button>
                 </div> : null}
 
         </div>

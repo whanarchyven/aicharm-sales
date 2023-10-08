@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-        <body className={classList(inter.className,'flex bg-white flex-col justify-center w-full')}>
+        <body className={classList(inter.className,'flex bg-white scroll-smooth flex-col justify-center w-full')}>
         <Navbar></Navbar>
         {children}
         <Footer></Footer>
