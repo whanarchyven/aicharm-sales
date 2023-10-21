@@ -1,11 +1,43 @@
+"use client"
 import Image from 'next/image'
 import Button from "@/app/components/UI/Button";
 import WrapP from "@/app/components/UI/wrapP";
 import AccordeonTab from "@/app/components/UI/AccordeonTab";
 import QntPicker from "@/app/components/UI/QntPicker";
 import Form from "@/app/components/Form";
+import axios from "axios";
+import {useEffect, useState} from "react";
+import {classList} from "@/app/helpers/classList";
 
-export default function Home() {
+export default function Home({params}:any) {
+
+    const uuid=params.id
+
+    const [data,setData]=useState<Array<any>>()
+
+    const fetchData=async ()=>{
+        await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res)=>{
+            console.log(res)
+            console.log(res.data[2].result.textEmotions.split(' '))
+            setData(res.data)
+        })
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, []);
+
+    const translateColor=(counter:number)=>{
+        switch (counter){
+            case 1:return 'bg-[#1DAEFF]'
+            case 2:return 'bg-[#71E884]'
+            case 3:return 'bg-[#FF7B7B]'
+            default: return 'bg-[#1DAEFF]'
+        }
+    }
+
+    if(!data) return  null
+
     return (
         <main className="bg-black w-full">
 
@@ -13,7 +45,6 @@ export default function Home() {
 
             <div className={'w-full flex justify-center sm:px-12 bg-white bg-cover relative py-12 sm:py-44'}>
                 <div className={'w-full h-full items-center p-2 sm:px-[20px] sm:sm:max-w-[1440px]'}>
-
                     <div className={'mt-6 grid sm:border-b-2 border-black border-opacity-10 grid-cols-1 sm:grid-cols-2 gap-8'}>
                         <div className={'flex flex-col w-full sm:py-8 '}>
                             <div className={'flex gap-3 items-start'}>
@@ -25,7 +56,7 @@ export default function Home() {
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                         <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Date and Time:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>[Date and Time]</p>
+                                            <p className={'sm:text-lg font-light'}>{new Date(data[0].createdAt).toLocaleDateString()} {new Date(data[0].createdAt).toLocaleTimeString()}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
@@ -51,13 +82,7 @@ export default function Home() {
                                     <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Conversation
                                         Summary:</p>
                                     <WrapP
-                                        body={'The call began with a brief introduction and a friendly exchange of pleasantries, establishing rapport.\n' +
-                                            '\n' +
-                                            'The manager effectively presented the product features and benefits, addressing the clients questions and concerns along the way.\n' +
-                                            '\n' +
-                                            'Throughout the call, the manager actively listened to the client, making them feel valued and understood.\n' +
-                                            '\n' +
-                                            'The closing stage was reached when [specific point in the conversation], and the manager confidently asked for the sale.'}
+                                        body={data[1].result.summaryClient}
                                         limiter={14} ending={'...'} color={'black'}></WrapP>
                                 </div>
                             </div>
@@ -74,7 +99,7 @@ export default function Home() {
                                             <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Client&apos;s
                                                 Decision Point:</p>
                                             <WrapP
-                                                body={'The clients decision was likely influenced by [key factors, e.g., price, product fit, trust in the manager].'}
+                                                body={data[1].result.clientDecisionPoint}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
                                         </div>
                                     </div>
@@ -89,22 +114,22 @@ export default function Home() {
                                             <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Factors
                                                 Influencing Client&apos;s Decision:</p>
                                             <WrapP
-                                                body={'The clients decision was likely influenced by [key factors, e.g., price, product fit, trust in the manager].'}
+                                                body={data[1].result.clientDecisionFactors}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className={'mt-4 sm:pl-20'}>
-                                <div className={'flex mt-4 items-center gap-3'}>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client-Manager
-                                        Match</p>
-                                    <img
-                                        className={'opacity-20 hover:opacity-100 cursor-pointer duration-300 transition-all'}
-                                        src={'/card/icons/info_black.svg'}/>
-                                </div>
-                                <img className={'sm:w-4/5 w-full'} src={'/card/match.svg'}/>
-                            </div>
+                            {/*<div className={'mt-4 sm:pl-20'}>*/}
+                            {/*    <div className={'flex mt-4 items-center gap-3'}>*/}
+                            {/*        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client-Manager*/}
+                            {/*            Match</p>*/}
+                            {/*        <img*/}
+                            {/*            className={'opacity-20 hover:opacity-100 cursor-pointer duration-300 transition-all'}*/}
+                            {/*            src={'/card/icons/info_black.svg'}/>*/}
+                            {/*    </div>*/}
+                            {/*    <img className={'sm:w-4/5 w-full'} src={'/card/match.svg'}/>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
 
@@ -118,9 +143,9 @@ export default function Home() {
                                 <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client Profile and
                                     State:</p>
                                 <div className={'flex gap-4  items-center'}>
-                                    <p className={'text-black sm:text-3xl font-bold'}>Client Name</p>
+                                    <p className={'text-black sm:text-3xl font-bold'}>{data[1].result.clientName}</p>
                                     <div className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
-                                        <p className={'text-white sm:text-lg text-xs font-bold'}>ENTJ</p>
+                                        <p className={'text-white sm:text-lg text-xs font-bold'}>{data[1].result.clientMbti}</p>
                                         <img
                                             className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
                                             src={'/card/icons/info_white.svg'}/>
@@ -129,74 +154,68 @@ export default function Home() {
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client Type:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>[New/Returning Client]</p>
+                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientStatus}</p>
                                     </div>
                                 </div>
-                                <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s Needs:</p>
-                                    <div className={'col-span-5 w-full text-sm'}>
-                                        <WrapP
-                                            body={'[Clients Needs and Preferences]'}
-                                            limiter={6} ending={'...'} color={'black'}></WrapP>
-                                    </div>
-                                </div>
-                                <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Emotional State:</p>
-                                    <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>[Client&apos;s Emotional State, e.g., Interested,
-                                            Curious]</p>
-                                    </div>
-                                </div>
+                                {/*<div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
+                                {/*    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s Needs:</p>*/}
+                                {/*    <div className={'col-span-5 w-full text-sm'}>*/}
+                                {/*        <WrapP*/}
+                                {/*            body={'[Clients Needs and Preferences]'}*/}
+                                {/*            limiter={6} ending={'...'} color={'black'}></WrapP>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+                                {/*<div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
+                                {/*    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Emotional State:</p>*/}
+                                {/*    <div className={'col-span-5 w-full text-sm'}>*/}
+                                {/*        <p className={'sm:text-lg font-light'}>[Client&apos;s Emotional State, e.g., Interested,*/}
+                                {/*            Curious]</p>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>[Purpose of the Call]</p>
+                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientGoal}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <WrapP
-                                            body={'[Clients MBTI Type, if known, e.g., "ISFP"]'}
-                                            limiter={6} ending={'...'} color={'black'}></WrapP>
+                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientMbti.concat(', confidence:',data[1].result.clientMbtiConfidencePercent,'%')}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s Traits:</p>
-                                    <div className={'col-span-5 flex items-center gap-3 w-full text-sm'}>
-                                        <div
-                                            className={'sm:px-4 p-2 sm:py-1 bg-[#1DAEFF] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                            Trait #1
-                                        </div>
-                                        <div
-                                            className={'sm:px-4 p-2 sm:py-1 bg-[#71E884] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                            Trait #2
-                                        </div>
-                                        <div
-                                            className={'sm:px-4 p-2 sm:py-1 bg-[#FF7B7B] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                            Trait #3
-                                        </div>
+                                    <div className={'col-span-5 flex flex-wrap items-center gap-3 w-full text-sm'}>
+                                        {data[1].result.clientMbtiTraits.split(',').map((trait:string,counter:number)=>{
+                                            return(
+                                                <div key={trait}
+                                                    className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center',translateColor(counter+1))}>
+                                                    {trait}
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 mt-8 items-start gap-1'}>
                                     <p className={'text-black sm:text-lg font-bold'}>Psychological Profile of the
                                         Client:</p>
                                     <div className={' w-full text-sm'}>
-                                        <p className={'sm:text-lg whitespace-pre-wrap font-light'}>1.Some text that
-                                            explains Psychological Profile of the Client <br/>
-                                            2.Some text that explains Psychological Profile of the Client <br/>
-                                            3.Some text that explains Psychological Profile of the Client <br/>
-                                            4.Some text that explains Psychological Profile of the Client <br/>
-                                            5.Some text that explains Psychological Profile of the Client</p>
+                                        <p className={'sm:text-lg whitespace-pre-wrap font-light'}>{data[1].result.clientPsyProfile}</p>
                                     </div>
                                 </div>
-                                <div className={'flex mt-8 items-center gap-3'}>
+                                <div className={'flex mt-8 items-start flex-col gap-3'}>
                                     <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client emotions</p>
-                                    <img
-                                        className={'opacity-20 hover:opacity-100 cursor-pointer duration-300 transition-all'}
-                                        src={'/card/icons/info_black.svg'}/>
+                                    <div className={'flex items-center gap-5 flex-wrap'}>
+
+                                        {data[2].result.textEmotions.split(' ').map((emotion:string,key:number)=>{
+                                            return(
+                                                <p className={'p-2 border-orange border-2 rounded-lg cursor-pointer'} key={key}>{emotion}</p>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
-                                <img className={'w-full sm:w-3/5'} src={'/card/emotions.svg'}/>
+
                             </div>
                         </div>
 
@@ -206,34 +225,42 @@ export default function Home() {
                                     <div className={'w-[7%] flex justify-start'}>
                                         <img className={'w-full aspect-square'} src={'/card/icons/client.svg'}/>
                                     </div>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Managers Profile and
-                                        State:</p>
+                                    <p className={'text-orange sm:text-2xl whitespace-nowrap leading-[100%] font-bold'}>Managers Profile and State:</p>
                                 </div>
                                 <div className={'flex pl-[7%] flex-col'}>
                                     <div className={'flex gap-3'}>
-                                        <p className={'font-bold sm:text-3xl'}>Manager Name</p>
+                                        <p className={'font-bold sm:text-3xl'}>Manager</p>
                                         <div className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
-                                            <p className={'text-white sm:text-lg text-xs font-bold'}>ENTJ</p>
+                                            <p className={'text-white sm:text-lg text-xs font-bold'}>{data[1].result.managerMbti}</p>
                                             <img
                                                 className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
                                                 src={'/card/icons/info_white.svg'}/>
                                         </div>
                                     </div>
+                                    <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
+                                        <div className={'col-span-5 w-full text-sm'}>
+                                            <p className={'sm:text-lg font-light'}>{data[1].result.managerGoal}</p>
+                                        </div>
+                                    </div>
+                                    <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
+                                        <div className={'col-span-5 w-full text-sm'}>
+                                            <p className={'sm:text-lg font-light'}>{data[1].result.managerMbti.concat(', confidence:',data[1].result.managerMbtiConfidencePercent,'%')}</p>
+                                        </div>
+                                    </div>
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 mt-3 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s Traits:</p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Manager&apos;s <br/>Traits:</p>
                                         <div className={'col-span-5 flex items-center gap-3 w-full text-sm'}>
-                                            <div
-                                                className={'sm:px-4 p-2 sm:py-1 bg-[#1DAEFF] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                                Trait #1
-                                            </div>
-                                            <div
-                                                className={'sm:px-4 p-2 sm:py-1 bg-[#71E884] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                                Trait #2
-                                            </div>
-                                            <div
-                                                className={'sm:px-4 p-2 sm:py-1 bg-[#FF7B7B] sm:text-lg text-xs text-white rounded-full flex items-center justify-center'}>
-                                                Trait #3
-                                            </div>
+                                            {data[1].result.managerMbtiTraits.split(',').map((trait:string,counter:number)=>{
+                                                return(
+                                                    <div key={trait}
+                                                        className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center',translateColor(counter+1))}>
+                                                        {trait}
+                                                    </div>
+                                                )
+                                            })}
+
                                         </div>
                                     </div>
 
@@ -253,21 +280,21 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={'mt-6'}>
-                                <div className={'flex gap-3 items-start'}>
-                                    <div className={'w-[5%] flex justify-start'}>
-                                        <img className={'w-6 aspect-square'}
-                                             src={'/card/icons/communication_active.svg'}/>
-                                    </div>
-                                    <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                        <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Communication
-                                            Skills:</p>
-                                        <WrapP
-                                            body={'The manager demonstrated effective communication skills throughout the call. They were articulate and used appropriate language to convey information.'}
-                                            limiter={15} ending={'...'} color={'black'}></WrapP>
-                                    </div>
-                                </div>
-                            </div>
+                            {/*<div className={'mt-6'}>*/}
+                            {/*    <div className={'flex gap-3 items-start'}>*/}
+                            {/*        <div className={'w-[5%] flex justify-start'}>*/}
+                            {/*            <img className={'w-6 aspect-square'}*/}
+                            {/*                 src={'/card/icons/communication_active.svg'}/>*/}
+                            {/*        </div>*/}
+                            {/*        <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>*/}
+                            {/*            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Communication*/}
+                            {/*                Skills:</p>*/}
+                            {/*            <WrapP*/}
+                            {/*                body={'The manager demonstrated effective communication skills throughout the call. They were articulate and used appropriate language to convey information.'}*/}
+                            {/*                limiter={15} ending={'...'} color={'black'}></WrapP>*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             <div className={'mt-6'}>
                                 <div className={'flex gap-3 items-start'}>
                                     <div className={'w-[5%] flex justify-start'}>
@@ -280,7 +307,7 @@ export default function Home() {
                                             <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
                                         </div>
                                         <WrapP
-                                            body={'The manager displayed a strong understanding of the product or service being discussed and effectively communicated its benefits.'}
+                                            body={data[1].result.managerProductKnowledge}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
@@ -297,29 +324,29 @@ export default function Home() {
                                             <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
                                         </div>
                                         <WrapP
-                                            body={'The manager displayed a strong understanding of the product or service being discussed and effectively communicated its benefits.'}
+                                            body={data[1].result.managerListeningSkills}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className={'mt-6'}>
-                                <div className={'flex gap-3 items-start'}>
-                                    <div className={'w-[5%] flex justify-start'}>
-                                        <img className={'w-6 aspect-square'} src={'/card/icons/closing_active.svg'}/>
-                                    </div>
-                                    <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                        <div className={'flex items-center gap-3'}>
-                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Closing
-                                                Techniques: </p>
-                                            <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
-                                        </div>
-                                        <WrapP
-                                            body={'The manager utilized closing techniques appropriately and at the right moments in the conversation.'}
-                                            limiter={15} ending={'...'} color={'black'}></WrapP>
-                                    </div>
-                                </div>
-                            </div>
+                            {/*<div className={'mt-6'}>*/}
+                            {/*    <div className={'flex gap-3 items-start'}>*/}
+                            {/*        <div className={'w-[5%] flex justify-start'}>*/}
+                            {/*            <img className={'w-6 aspect-square'} src={'/card/icons/closing_active.svg'}/>*/}
+                            {/*        </div>*/}
+                            {/*        <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>*/}
+                            {/*            <div className={'flex items-center gap-3'}>*/}
+                            {/*                <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Closing*/}
+                            {/*                    Techniques: </p>*/}
+                            {/*                <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>*/}
+                            {/*            </div>*/}
+                            {/*            <WrapP*/}
+                            {/*                body={'The manager utilized closing techniques appropriately and at the right moments in the conversation.'}*/}
+                            {/*                limiter={15} ending={'...'} color={'black'}></WrapP>*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
 
                             <div className={'mt-6'}>
                                 <div className={'flex gap-3 items-start'}>
@@ -330,11 +357,7 @@ export default function Home() {
                                         <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Psychological
                                             Profile of the Manager:</p>
                                         <WrapP
-                                            body={'The manager exhibited confidence and enthusiasm during the call, which likely positively influenced the clients perception.\n' +
-                                                '\n' +
-                                                'Their tone was friendly and professional, creating a comfortable atmosphere for the client.\n' +
-                                                '\n' +
-                                                'The manager appeared motivated and goal-oriented, aiming to achieve a successful outcome.'}
+                                            body={data[1].result.managerPsyProfile}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
