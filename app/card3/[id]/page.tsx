@@ -9,16 +9,77 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {classList} from "@/app/helpers/classList";
 
-export default function Home({params}:any) {
+export default function Home({params}: any) {
 
-    const uuid=params.id
+    const uuid = params.id
 
-    const [data,setData]=useState<Array<any>>()
-
-    const fetchData=async ()=>{
-        await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res)=>{
+    const [data, setData] = useState<Array<any>>()
+    const [transcribation, setTranscribation] = useState<{
+        createdAt: string,
+        model: string,
+        result: { text: string },
+        updatedAt: string,
+        uuid: string
+    }>()
+    const [summary, setSummary] = useState<{
+        createdAt: string
+        model: string
+        result: {
+            attentionComment: string
+            attentionLevel: string
+            clientDecisionFactors: string
+            clientDecisionPoint: string
+            clientGoal: string
+            clientMbti: string
+            clientMbtiConfidencePercent: string
+            clientMbtiTraits: string
+            clientName: string
+            clientPsyProfile: string
+            clientRecognized: string
+            clientStatus: string
+            managerGoal: string
+            managerListeningSkills: string
+            managerMbti: string
+            managerMbtiConfidencePercent: string
+            managerMbtiTraits: string
+            managerProductKnowledge: string
+            managerPsyProfile: string
+            summaryClient: string
+        }
+        updatedAt: string
+        uuid: string
+    }>()
+    const [textEmotions, setTextEmotions] = useState<{
+        createdAt: string
+        model: string
+        result: { textEmotions: string }
+        updatedAt: string
+        uuid: string
+    }>()
+    const [facts, setFacts] = useState()
+    const [tags, setTags] = useState()
+    const fetchData = async () => {
+        await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res) => {
             console.log(res)
-            console.log(res.data[2].result.textEmotions.split(' '))
+            console.log(res.data[2].result.textEmotions?.split(' '))
+            res.data.map((model: any) => {
+                if (model.model.includes('transcribation')) {
+                    setTranscribation(model)
+                }
+                if (model.model.includes('aicharm-sales')) {
+                    setSummary(model)
+                }
+                if (model.model.includes('aicharm-text-emoton')) {
+                    setTextEmotions(model)
+                }
+                if (model.model.includes('aicharm-facts')) {
+                    setFacts(model)
+                }
+                if (model.model.includes('aicharm-tags')) {
+                    setTags(model)
+                }
+
+            })
             setData(res.data)
         })
     }
@@ -27,16 +88,20 @@ export default function Home({params}:any) {
         fetchData()
     }, []);
 
-    const translateColor=(counter:number)=>{
-        switch (counter){
-            case 1:return 'bg-[#1DAEFF]'
-            case 2:return 'bg-[#71E884]'
-            case 3:return 'bg-[#FF7B7B]'
-            default: return 'bg-[#1DAEFF]'
+    const translateColor = (counter: number) => {
+        switch (counter) {
+            case 1:
+                return 'bg-[#1DAEFF]'
+            case 2:
+                return 'bg-[#71E884]'
+            case 3:
+                return 'bg-[#FF7B7B]'
+            default:
+                return 'bg-[#1DAEFF]'
         }
     }
 
-    if(!data) return  null
+    if (!data) return null
 
     return (
         <main className="bg-black w-full">
@@ -45,7 +110,8 @@ export default function Home({params}:any) {
 
             <div className={'w-full flex justify-center sm:px-12 bg-white bg-cover relative py-12 sm:py-44'}>
                 <div className={'w-full h-full items-center p-2 sm:px-[20px] sm:sm:max-w-[1440px]'}>
-                    <div className={'mt-6 grid sm:border-b-2 border-black border-opacity-10 grid-cols-1 sm:grid-cols-2 gap-8'}>
+                    <div
+                        className={'mt-6 grid sm:border-b-2 border-black border-opacity-10 grid-cols-1 sm:grid-cols-2 gap-8'}>
                         <div className={'flex flex-col w-full sm:py-8 '}>
                             <div className={'flex gap-3 items-start'}>
                                 <div className={'w-[5%] flex justify-start'}>
@@ -53,14 +119,17 @@ export default function Home({params}:any) {
                                 </div>
                                 <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
                                     <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Call details:</p>
+                                    {transcribation ?
+                                        <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
+                                            <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Date and
+                                                Time:</p>
+                                            <div className={'col-span-5 w-full text-sm'}>
+                                                <p className={'sm:text-lg font-light'}>{new Date(transcribation.createdAt).toLocaleDateString()} {new Date(transcribation?.createdAt).toLocaleTimeString()}</p>
+                                            </div>
+                                        </div> : null}
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Date and Time:</p>
-                                        <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>{new Date(data[0].createdAt).toLocaleDateString()} {new Date(data[0].createdAt).toLocaleTimeString()}</p>
-                                        </div>
-                                    </div>
-                                    <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Duration:</p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call
+                                            Duration:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
                                             <p className={'sm:text-lg font-light'}>[Duration]</p>
                                         </div>
@@ -82,7 +151,7 @@ export default function Home({params}:any) {
                                     <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Conversation
                                         Summary:</p>
                                     <WrapP
-                                        body={data[1].result.summaryClient}
+                                        body={summary?.result.summaryClient}
                                         limiter={14} ending={'...'} color={'black'}></WrapP>
                                 </div>
                             </div>
@@ -99,7 +168,7 @@ export default function Home({params}:any) {
                                             <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Client&apos;s
                                                 Decision Point:</p>
                                             <WrapP
-                                                body={data[1].result.clientDecisionPoint}
+                                                body={summary?.result.clientDecisionPoint}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
                                         </div>
                                     </div>
@@ -114,7 +183,7 @@ export default function Home({params}:any) {
                                             <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Factors
                                                 Influencing Client&apos;s Decision:</p>
                                             <WrapP
-                                                body={data[1].result.clientDecisionFactors}
+                                                body={summary?.result.clientDecisionFactors}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
                                         </div>
                                     </div>
@@ -143,9 +212,10 @@ export default function Home({params}:any) {
                                 <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client Profile and
                                     State:</p>
                                 <div className={'flex gap-4  items-center'}>
-                                    <p className={'text-black sm:text-3xl font-bold'}>{data[1].result.clientName}</p>
-                                    <div className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
-                                        <p className={'text-white sm:text-lg text-xs font-bold'}>{data[1].result.clientMbti}</p>
+                                    <p className={'text-black sm:text-3xl font-bold'}>{summary?.result.clientName}</p>
+                                    <div
+                                        className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
+                                        <p className={'text-white sm:text-lg text-xs font-bold'}>{summary?.result.clientMbti}</p>
                                         <img
                                             className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
                                             src={'/card/icons/info_white.svg'}/>
@@ -154,7 +224,7 @@ export default function Home({params}:any) {
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client Type:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientStatus}</p>
+                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientStatus}</p>
                                     </div>
                                 </div>
                                 {/*<div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
@@ -175,22 +245,23 @@ export default function Home({params}:any) {
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientGoal}</p>
+                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientGoal}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>{data[1].result.clientMbti.concat(', confidence:',data[1].result.clientMbtiConfidencePercent,'%')}</p>
+                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientMbti.concat(', confidence:', summary?.result.clientMbtiConfidencePercent, '%')}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s Traits:</p>
+                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s
+                                        Traits:</p>
                                     <div className={'col-span-5 flex flex-wrap items-center gap-3 w-full text-sm'}>
-                                        {data[1].result.clientMbtiTraits.split(',').map((trait:string,counter:number)=>{
-                                            return(
+                                        {summary?.result.clientMbtiTraits.split(',').map((trait: string, counter: number) => {
+                                            return (
                                                 <div key={trait}
-                                                    className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center',translateColor(counter+1))}>
+                                                     className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
                                                     {trait}
                                                 </div>
                                             )
@@ -201,16 +272,18 @@ export default function Home({params}:any) {
                                     <p className={'text-black sm:text-lg font-bold'}>Psychological Profile of the
                                         Client:</p>
                                     <div className={' w-full text-sm'}>
-                                        <p className={'sm:text-lg whitespace-pre-wrap font-light'}>{data[1].result.clientPsyProfile}</p>
+                                        <p className={'sm:text-lg whitespace-pre-wrap font-light'}>{summary?.result.clientPsyProfile}</p>
                                     </div>
                                 </div>
                                 <div className={'flex mt-8 items-start flex-col gap-3'}>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client emotions</p>
+                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client
+                                        emotions</p>
                                     <div className={'flex items-center gap-5 flex-wrap'}>
 
-                                        {data[2].result.textEmotions.split(' ').map((emotion:string,key:number)=>{
-                                            return(
-                                                <p className={'p-2 border-orange border-2 rounded-lg cursor-pointer'} key={key}>{emotion}</p>
+                                        {textEmotions?.result.textEmotions.split(' ').map((emotion: string, key: number) => {
+                                            return (
+                                                <p className={'p-2 border-orange border-2 rounded-lg cursor-pointer'}
+                                                   key={key}>{emotion}</p>
                                             )
                                         })}
                                     </div>
@@ -225,13 +298,15 @@ export default function Home({params}:any) {
                                     <div className={'w-[7%] flex justify-start'}>
                                         <img className={'w-full aspect-square'} src={'/card/icons/client.svg'}/>
                                     </div>
-                                    <p className={'text-orange sm:text-2xl whitespace-nowrap leading-[100%] font-bold'}>Managers Profile and State:</p>
+                                    <p className={'text-orange sm:text-2xl whitespace-nowrap leading-[100%] font-bold'}>Managers
+                                        Profile and State:</p>
                                 </div>
                                 <div className={'flex pl-[7%] flex-col'}>
                                     <div className={'flex gap-3'}>
                                         <p className={'font-bold sm:text-3xl'}>Manager</p>
-                                        <div className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
-                                            <p className={'text-white sm:text-lg text-xs font-bold'}>{data[1].result.managerMbti}</p>
+                                        <div
+                                            className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
+                                            <p className={'text-white sm:text-lg text-xs font-bold'}>{summary?.result.managerMbti}</p>
                                             <img
                                                 className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
                                                 src={'/card/icons/info_white.svg'}/>
@@ -240,22 +315,23 @@ export default function Home({params}:any) {
                                     <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
                                         <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>{data[1].result.managerGoal}</p>
+                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerGoal}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
                                         <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>{data[1].result.managerMbti.concat(', confidence:',data[1].result.managerMbtiConfidencePercent,'%')}</p>
+                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerMbti.concat(', confidence:', summary?.result.managerMbtiConfidencePercent, '%')}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 mt-3 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Manager&apos;s <br/>Traits:</p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Manager&apos;s <br/>Traits:
+                                        </p>
                                         <div className={'col-span-5 flex items-center gap-3 w-full text-sm'}>
-                                            {data[1].result.managerMbtiTraits.split(',').map((trait:string,counter:number)=>{
-                                                return(
+                                            {summary?.result.managerMbtiTraits.split(',').map((trait: string, counter: number) => {
+                                                return (
                                                     <div key={trait}
-                                                        className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center',translateColor(counter+1))}>
+                                                         className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
                                                         {trait}
                                                     </div>
                                                 )
@@ -307,7 +383,7 @@ export default function Home({params}:any) {
                                             <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
                                         </div>
                                         <WrapP
-                                            body={data[1].result.managerProductKnowledge}
+                                            body={summary?.result.managerProductKnowledge}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
@@ -324,7 +400,7 @@ export default function Home({params}:any) {
                                             <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
                                         </div>
                                         <WrapP
-                                            body={data[1].result.managerListeningSkills}
+                                            body={summary?.result.managerListeningSkills}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
@@ -357,7 +433,7 @@ export default function Home({params}:any) {
                                         <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Psychological
                                             Profile of the Manager:</p>
                                         <WrapP
-                                            body={data[1].result.managerPsyProfile}
+                                            body={summary?.result.managerPsyProfile}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
                                     </div>
                                 </div>
