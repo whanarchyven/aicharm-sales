@@ -251,14 +251,14 @@ export default function Home({params}: any) {
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientMbti.concat(', confidence:', summary?.result.clientMbtiConfidencePercent, '%')}</p>
+                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientMbti?.concat(', confidence:', summary?.result.clientMbtiConfidencePercent, '%')}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
                                     <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s
                                         Traits:</p>
                                     <div className={'col-span-5 flex flex-wrap items-center gap-3 w-full text-sm'}>
-                                        {summary?.result.clientMbtiTraits.split(',').map((trait: string, counter: number) => {
+                                        {summary?.result.clientMbtiTraits?.split(',').map((trait: string, counter: number) => {
                                             return (
                                                 <div key={trait}
                                                      className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
@@ -280,7 +280,7 @@ export default function Home({params}: any) {
                                         emotions</p>
                                     <div className={'flex items-center gap-5 flex-wrap'}>
 
-                                        {textEmotions?.result.textEmotions.split(' ').map((emotion: string, key: number) => {
+                                        {textEmotions?.result.textEmotions?.split(' ').map((emotion: string, key: number) => {
                                             return (
                                                 <p className={'p-2 border-orange border-2 rounded-lg cursor-pointer'}
                                                    key={key}>{emotion}</p>
@@ -321,14 +321,14 @@ export default function Home({params}: any) {
                                     <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
                                         <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerMbti.concat(', confidence:', summary?.result.managerMbtiConfidencePercent, '%')}</p>
+                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerMbti?.concat(', confidence:', summary?.result.managerMbtiConfidencePercent, '%')}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 mt-3 items-start gap-1'}>
                                         <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Manager&apos;s <br/>Traits:
                                         </p>
                                         <div className={'col-span-5 flex items-center gap-3 w-full text-sm'}>
-                                            {summary?.result.managerMbtiTraits.split(',').map((trait: string, counter: number) => {
+                                            {summary?.result.managerMbtiTraits?.split(',').map((trait: string, counter: number) => {
                                                 return (
                                                     <div key={trait}
                                                          className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
