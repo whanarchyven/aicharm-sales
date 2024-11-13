@@ -8,7 +8,7 @@ import Footer from "@/app/components/Footer";
 const inter = Inter({subsets: ['latin']})
 
 export const metadata: Metadata = {
-    title: 'AICHARM SALES',
+    title: 'sales-calls-demo',
     description: 'First AI characters system',
 }
 

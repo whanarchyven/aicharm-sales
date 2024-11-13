@@ -42,9 +42,9 @@ const Navbar = () => {
             className={classList('bg-black fixed z-50 left-0 top-0 py-2 sm:py-8 sm:px-12 flex flex-col items-center w-full', isOpen ? 'h-full' : 'h-12 sm:h-auto justify-center')}>
             <div className={'hidden sm:flex justify-between w-full sm:max-w-[1440px]'}>
                 <div className={'flex gap-16 items-center'}>
-                    <Link href={'/'}>
-                        <img src={'/logo.svg'}/>
-                    </Link>
+                    {/*<Link href={'/'}>*/}
+                    {/*    <img src={'/logo.svg'}/>*/}
+                    {/*</Link>*/}
                     {links.map((link) => {
                         if(pathname=='/'){
                             return (

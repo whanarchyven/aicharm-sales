@@ -8,16 +8,45 @@ import Form from "@/app/components/Form";
 import axios from "axios";
 import {useEffect, useState} from "react";
 import {classList} from "@/app/helpers/classList";
+import ClientEmotions from "@/app/components/ClientEmotions";
+import {stat} from "fs";
+import {ClipLoader} from "react-spinners";
 
 export default function Home({params}: any) {
 
     const uuid = params.id
 
+    const mockData = {
+        "isSalesCallAtAll": false,
+        "attentionComment": "Клиент был недоволен отказом в бонусе, несмотря на то, что является хорошим клиентом.",
+        "attentionLevel": "Средний",
+        "clientDecisionFactors": "Менеджер предложил бонус в виде 25 евро и двух золотых уценок.",
+        "clientDecisionPoint": "Клиент успокоился после получения бонуса и выразил благодарность.",
+        "clientGoal": "Клиент хотел получить бонус или подарок за лояльность.",
+        "clientMbti": "ISFJ",
+        "clientMbtiConfidencePercent": "85%",
+        "clientMbtiTraits": "#Лояльный #Чувствительный",
+        "clientName": "Жаклин Бишар",
+        "clientPsyProfile": "Клиент ценит лояльность и ожидает взаимности от компании в виде бонусов или подарков.",
+        "clientRecognized": "Чувствительный и немного разочарованный.",
+        "clientStatus": "Существующий",
+        "managerGoal": "Успокоить клиента и предложить ему подходящий бонус для сохранения лояльности.",
+        "managerListeningSkills": "Менеджер внимательно выслушал клиента и выяснил причину недовольства.",
+        "managerMbti": "ESTJ",
+        "managerMbtiConfidencePercent": "90%",
+        "managerMbtiTraits": "#Эффективность #Решительность #Уверенность",
+        "managerProductKnowledge": "Менеджер хорошо знает политику компании относительно бонусов и может оперативно принимать решения.",
+        "managerPsyProfile": "Менеджер ориентируется на быстрое решение проблем клиента и поддержание хороших отношений.",
+        "summaryClient": "Клиент был недоволен из-за отказа в бонусе, но менеджер смог удовлетворить его запрос, предоставив бонус."
+    }
+
     const [data, setData] = useState<Array<any>>()
     const [transcribation, setTranscribation] = useState<{
         createdAt: string,
         model: string,
-        result: { text: string },
+        result: {
+            text: string
+        },
         updatedAt: string,
         uuid: string
     }>()
@@ -44,7 +73,12 @@ export default function Home({params}: any) {
             managerMbtiTraits: string
             managerProductKnowledge: string
             managerPsyProfile: string
-            summaryClient: string
+            summaryClient: string;
+            top_five_emotions?: {
+                "emoticon": string,
+                "rank": number,
+                "name": string
+            }[]
         }
         updatedAt: string
         uuid: string
@@ -52,40 +86,60 @@ export default function Home({params}: any) {
     const [textEmotions, setTextEmotions] = useState<{
         createdAt: string
         model: string
-        result: { textEmotions: string }
+        result: {
+            textEmotions: string
+        }
         updatedAt: string
         uuid: string
     }>()
     const [facts, setFacts] = useState()
     const [tags, setTags] = useState()
-    const fetchData = async () => {
-        await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res) => {
-            console.log(res)
-            console.log(res.data[2].result.textEmotions?.split(' '))
-            res.data.map((model: any) => {
-                if (model.model.includes('transcribation')) {
-                    setTranscribation(model)
-                }
-                if (model.model.includes('aicharm-sales')) {
-                    setSummary(model)
-                }
-                if (model.model.includes('aicharm-text-emoton')) {
-                    setTextEmotions(model)
-                }
-                if (model.model.includes('aicharm-facts')) {
-                    setFacts(model)
-                }
-                if (model.model.includes('aicharm-tags')) {
-                    setTags(model)
-                }
 
-            })
-            setData(res.data)
+    const [status,setStatus]=useState('')
+    const [isLoading,setIsLoading]=useState(true)
+    const fetchData = async () => {
+        // await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res) => {
+        //     console.log(res)
+        //     console.log(res.data[2].result.textEmotions?.split(' '))
+        //     res.data.map((model: any) => {
+        //         if (model.model.includes('transcribation')) {
+        //             setTranscribation(model)
+        //         }
+        //         if (model.model.includes('aicharm-sales')) {
+        //             setSummary(model)
+        //         }
+        //         if (model.model.includes('aicharm-text-emoton')) {
+        //             setTextEmotions(model)
+        //         }
+        //         if (model.model.includes('aicharm-facts')) {
+        //             setFacts(model)
+        //         }
+        //         if (model.model.includes('aicharm-tags')) {
+        //             setTags(model)
+        //         }
+        //
+        //     })
+        //     setData(res.data)
+        // })
+
+
+        await axios.get(`/api/get-report/${uuid}`).then((res) => {
+            console.log(res.data.result)
+            setSummary(res.data)
+            setStatus(res.data.status)
+            setIsLoading(false)
         })
+
+
     }
 
     useEffect(() => {
         fetchData()
+        // setSummary({
+        //     model: 'a',
+        //     createdAt: new Date().toISOString(),
+        //     result: mockData
+        // })
     }, []);
 
     const translateColor = (counter: number) => {
@@ -101,7 +155,16 @@ export default function Home({params}: any) {
         }
     }
 
-    if (!data) return null
+    if(isLoading){
+        return <div className={'h-screen flex items-center justify-center'}>
+            <ClipLoader/>
+        </div>
+    }
+
+    // if (!data) return null
+    if (!summary||status!='Обработка завершена') return <div className={'h-screen flex items-center justify-center'}>
+        <p>{status}</p>
+    </div>
 
     return (
         <main className="bg-black w-full">
@@ -113,43 +176,42 @@ export default function Home({params}: any) {
                     <div
                         className={'mt-6 grid sm:border-b-2 border-black border-opacity-10 grid-cols-1 sm:grid-cols-2 gap-8'}>
                         <div className={'flex flex-col w-full sm:py-8 '}>
-                            <div className={'flex gap-3 items-start'}>
-                                <div className={'w-[5%] flex justify-start'}>
-                                    <img className={'w-6 aspect-square'} src={'/card/icons/info.svg'}/>
-                                </div>
-                                <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Call details:</p>
-                                    {transcribation ?
-                                        <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                            <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Date and
-                                                Time:</p>
-                                            <div className={'col-span-5 w-full text-sm'}>
-                                                <p className={'sm:text-lg font-light'}>{new Date(transcribation.createdAt).toLocaleDateString()} {new Date(transcribation?.createdAt).toLocaleTimeString()}</p>
-                                            </div>
-                                        </div> : null}
-                                    <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call
-                                            Duration:</p>
-                                        <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>[Duration]</p>
-                                        </div>
-                                    </div>
-                                    <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
-                                        <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>[Purpose of the Call]</p>
-                                        </div>
-                                    </div>
+                            {/*<div className={'flex gap-3 items-start'}>*/}
+                            {/*    <div className={'w-[5%] flex justify-start'}>*/}
+                            {/*        <img className={'w-6 aspect-square'} src={'/card/icons/info.svg'}/>*/}
+                            {/*    </div>*/}
+                            {/*    <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>*/}
+                            {/*        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Детали звонка:</p>*/}
+                            {/*        {transcribation || true ?*/}
+                            {/*            <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
+                            {/*                <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Дата и*/}
+                            {/*                    время:</p>*/}
+                            {/*                <div className={'col-span-5 w-full text-sm'}>*/}
+                            {/*                    <p className={'sm:text-lg font-light'}>{new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>*/}
+                            {/*                </div>*/}
+                            {/*            </div> : null}*/}
+                            {/*        <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
+                            {/*            <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Длительность</p>*/}
+                            {/*            <div className={'col-span-5 w-full text-sm'}>*/}
+                            {/*                <p className={'sm:text-lg font-light'}>[Duration]</p>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*        <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>*/}
+                            {/*            <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Причина:</p>*/}
+                            {/*            <div className={'col-span-5 w-full text-sm'}>*/}
+                            {/*                <p className={'sm:text-lg font-light'}>[Purpose of the Call]</p>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
 
-                                </div>
-                            </div>
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             <div className={'flex gap-3 mt-6 items-start'}>
                                 <div className={'w-[5%] flex justify-start'}>
                                     <img className={'w-6 aspect-square'} src={'/card/icons/conversation.svg'}/>
                                 </div>
                                 <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Conversation
-                                        Summary:</p>
+                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Резюме
+                                        разговора</p>
                                     <WrapP
                                         body={summary?.result.summaryClient}
                                         limiter={14} ending={'...'} color={'black'}></WrapP>
@@ -157,7 +219,8 @@ export default function Home({params}: any) {
                             </div>
                         </div>
                         <div className={'flex flex-col w-full sm:pl-8 sm:py-8 border-black border-opacity-10'}>
-                            <div className={'sm:pl-10 sm:py-6 sm:border-2 border-black border-opacity-10 rounded-xl'}>
+                            <div
+                                className={'sm:pl-10 sm:py-6 bg-[#FFE0CE] sm:border-2 border-black border-opacity-10 rounded-xl'}>
                                 <div className={''}>
                                     <div className={'flex gap-3 items-start'}>
                                         <div className={'w-[5%] flex justify-start'}>
@@ -165,8 +228,8 @@ export default function Home({params}: any) {
                                                  src={'/card/icons/clients_active.svg'}/>
                                         </div>
                                         <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Client&apos;s
-                                                Decision Point:</p>
+                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Decision
+                                                Point клиента</p>
                                             <WrapP
                                                 body={summary?.result.clientDecisionPoint}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
@@ -180,8 +243,8 @@ export default function Home({params}: any) {
                                                  src={'/card/icons/factors_active.svg'}/>
                                         </div>
                                         <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Factors
-                                                Influencing Client&apos;s Decision:</p>
+                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Главные
+                                                факторы принятия решения:</p>
                                             <WrapP
                                                 body={summary?.result.clientDecisionFactors}
                                                 limiter={15} ending={'...'} color={'black'}></WrapP>
@@ -209,8 +272,7 @@ export default function Home({params}: any) {
                                 <img className={'w-6 aspect-square'} src={'/card/icons/client.svg'}/>
                             </div>
                             <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client Profile and
-                                    State:</p>
+                                <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Профиль клиента</p>
                                 <div className={'flex gap-4  items-center'}>
                                     <p className={'text-black sm:text-3xl font-bold'}>{summary?.result.clientName}</p>
                                     <div
@@ -222,7 +284,7 @@ export default function Home({params}: any) {
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client Type:</p>
+                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Тип клиента:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
                                         <p className={'sm:text-lg font-light'}>{summary?.result.clientStatus}</p>
                                     </div>
@@ -243,22 +305,21 @@ export default function Home({params}: any) {
                                 {/*    </div>*/}
                                 {/*</div>*/}
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
+                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Запрос клиента:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
                                         <p className={'sm:text-lg font-light'}>{summary?.result.clientGoal}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
+                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI тип:</p>
                                     <div className={'col-span-5 w-full text-sm'}>
-                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientMbti?.concat(', confidence:', summary?.result.clientMbtiConfidencePercent, '%')}</p>
+                                        <p className={'sm:text-lg font-light'}>{summary?.result.clientMbti?.concat(', confidence:', summary?.result.clientMbtiConfidencePercent)}</p>
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 sm:grid-cols-7 items-start gap-1'}>
-                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Client&apos;s
-                                        Traits:</p>
+                                    <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Теги:</p>
                                     <div className={'col-span-5 flex flex-wrap items-center gap-3 w-full text-sm'}>
-                                        {summary?.result.clientMbtiTraits?.split(',').map((trait: string, counter: number) => {
+                                        {summary?.result.clientMbtiTraits?.split('#').splice(1, 100).map((trait: string, counter: number) => {
                                             return (
                                                 <div key={trait}
                                                      className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
@@ -269,25 +330,17 @@ export default function Home({params}: any) {
                                     </div>
                                 </div>
                                 <div className={'grid grid-cols-1 mt-8 items-start gap-1'}>
-                                    <p className={'text-black sm:text-lg font-bold'}>Psychological Profile of the
-                                        Client:</p>
+                                    <p className={'text-black sm:text-lg font-bold'}>Психологическая характеристика:</p>
                                     <div className={' w-full text-sm'}>
                                         <p className={'sm:text-lg whitespace-pre-wrap font-light'}>{summary?.result.clientPsyProfile}</p>
                                     </div>
                                 </div>
-                                <div className={'flex mt-8 items-start flex-col gap-3'}>
-                                    <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Client
-                                        emotions</p>
-                                    <div className={'flex items-center gap-5 flex-wrap'}>
-
-                                        {textEmotions?.result.textEmotions?.split(' ').map((emotion: string, key: number) => {
-                                            return (
-                                                <p className={'p-2 border-orange border-2 rounded-lg cursor-pointer'}
-                                                   key={key}>{emotion}</p>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
+                                {summary.result.top_five_emotions ?
+                                    <div className={'flex mt-8 items-start flex-col gap-3'}>
+                                        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Эмоции
+                                            клиента:</p>
+                                        <ClientEmotions emotions={summary.result.top_five_emotions}/>
+                                    </div> : null}
 
                             </div>
                         </div>
@@ -298,8 +351,8 @@ export default function Home({params}: any) {
                                     <div className={'w-[7%] flex justify-start'}>
                                         <img className={'w-full aspect-square'} src={'/card/icons/client.svg'}/>
                                     </div>
-                                    <p className={'text-orange sm:text-2xl whitespace-nowrap leading-[100%] font-bold'}>Managers
-                                        Profile and State:</p>
+                                    <p className={'text-orange sm:text-2xl whitespace-nowrap leading-[100%] font-bold'}>Профиль
+                                        менеджера:</p>
                                 </div>
                                 <div className={'flex pl-[7%] flex-col'}>
                                     <div className={'flex gap-3'}>
@@ -313,22 +366,22 @@ export default function Home({params}: any) {
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Call Purpose:</p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Цель
+                                            менеджера:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
                                             <p className={'sm:text-lg font-light'}>{summary?.result.managerGoal}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 my-3 sm:grid-cols-7 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI Type:</p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>MBTI тип:</p>
                                         <div className={'col-span-5 w-full text-sm'}>
-                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerMbti?.concat(', confidence:', summary?.result.managerMbtiConfidencePercent, '%')}</p>
+                                            <p className={'sm:text-lg font-light'}>{summary?.result.managerMbti?.concat(', confidence:', summary?.result.managerMbtiConfidencePercent)}</p>
                                         </div>
                                     </div>
                                     <div className={'grid grid-cols-1 sm:grid-cols-7 mt-3 items-start gap-1'}>
-                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Manager&apos;s <br/>Traits:
-                                        </p>
+                                        <p className={'text-black sm:col-span-2 sm:text-lg font-bold'}>Теги:</p>
                                         <div className={'col-span-5 flex items-center gap-3 w-full text-sm'}>
-                                            {summary?.result.managerMbtiTraits?.split(',').map((trait: string, counter: number) => {
+                                            {summary?.result.managerMbtiTraits?.split('#').splice(1, 100).map((trait: string, counter: number) => {
                                                 return (
                                                     <div key={trait}
                                                          className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
@@ -350,9 +403,8 @@ export default function Home({params}: any) {
                                         <img className={'w-6 aspect-square'} src={'/card/icons/performance.svg'}/>
                                     </div>
                                     <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Manager&apos;s
-                                            Performance
-                                            Assessment:</p>
+                                        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Оценка
+                                            эффективности</p>
                                     </div>
                                 </div>
                             </div>
@@ -378,9 +430,9 @@ export default function Home({params}: any) {
                                     </div>
                                     <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
                                         <div className={'flex items-center gap-3'}>
-                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Product
-                                                Knowledge:</p>
-                                            <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
+                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Знание
+                                                продукта</p>
+                                            {/*<img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>*/}
                                         </div>
                                         <WrapP
                                             body={summary?.result.managerProductKnowledge}
@@ -395,9 +447,9 @@ export default function Home({params}: any) {
                                     </div>
                                     <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
                                         <div className={'flex items-center gap-3'}>
-                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Listening
-                                                Skills:</p>
-                                            <img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>
+                                            <p className={'text-black col-span-2 leading-[100%] text-lg font-bold'}>Умение
+                                                слышать клиента:</p>
+                                            {/*<img className={'sm:w-auto w-16'} src={'/card/icons/stars.svg'}/>*/}
                                         </div>
                                         <WrapP
                                             body={summary?.result.managerListeningSkills}
@@ -430,8 +482,8 @@ export default function Home({params}: any) {
                                         <img className={'w-6 aspect-square'} src={'/card/icons/psychological.svg'}/>
                                     </div>
                                     <div className={'flex flex-col w-[80%] sm:w-[95%] gap-3'}>
-                                        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Psychological
-                                            Profile of the Manager:</p>
+                                        <p className={'text-orange sm:text-2xl leading-[100%] font-bold'}>Психологический
+                                            профиль менеджера</p>
                                         <WrapP
                                             body={summary?.result.managerPsyProfile}
                                             limiter={15} ending={'...'} color={'black'}></WrapP>
