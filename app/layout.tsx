@@ -20,9 +20,9 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className={classList(inter.className,'flex bg-white scroll-smooth flex-col justify-center w-full')}>
-        <Navbar></Navbar>
+        {/*<Navbar></Navbar>*/}
         {children}
-        <Footer></Footer>
+        {/*<Footer></Footer>*/}
         </body>
         </html>
     )

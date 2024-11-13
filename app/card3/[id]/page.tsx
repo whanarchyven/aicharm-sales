@@ -98,49 +98,34 @@ export default function Home({params}: any) {
     const [status,setStatus]=useState('')
     const [isLoading,setIsLoading]=useState(true)
     const fetchData = async () => {
-        // await axios.get(`https://v3.ptq.pw/demo-sales/${uuid}`).then((res) => {
-        //     console.log(res)
-        //     console.log(res.data[2].result.textEmotions?.split(' '))
-        //     res.data.map((model: any) => {
-        //         if (model.model.includes('transcribation')) {
-        //             setTranscribation(model)
-        //         }
-        //         if (model.model.includes('aicharm-sales')) {
-        //             setSummary(model)
-        //         }
-        //         if (model.model.includes('aicharm-text-emoton')) {
-        //             setTextEmotions(model)
-        //         }
-        //         if (model.model.includes('aicharm-facts')) {
-        //             setFacts(model)
-        //         }
-        //         if (model.model.includes('aicharm-tags')) {
-        //             setTags(model)
-        //         }
-        //
-        //     })
-        //     setData(res.data)
-        // })
+        try {
+            const res = await axios.get(`/api/get-report/${uuid}`);
+            console.log(res.data.result);
 
-
-        await axios.get(`/api/get-report/${uuid}`).then((res) => {
-            console.log(res.data.result)
-            setSummary(res.data)
-            setStatus(res.data.status)
-            setIsLoading(false)
-        })
-
-
-    }
+            setSummary(res.data);
+            setStatus(res.data.status);
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     useEffect(() => {
-        fetchData()
-        // setSummary({
-        //     model: 'a',
-        //     createdAt: new Date().toISOString(),
-        //     result: mockData
-        // })
-    }, []);
+        // Функция для выполнения fetchData каждые 5 секунд, пока статус не будет завершён
+        const intervalId = setInterval(() => {
+            if (status !== 'Обработка завершена') {
+                fetchData();
+            } else {
+                clearInterval(intervalId); // Очищаем интервал, если статус достиг нужного значения
+            }
+        }, 5000);
+
+        // Выполнение fetchData сразу при монтировании
+        fetchData();
+
+        // Очищаем интервал при размонтировании компонента
+        return () => clearInterval(intervalId);
+    }, [status]); // Следим за изменением `status`
 
     const translateColor = (counter: number) => {
         switch (counter) {
@@ -171,7 +156,7 @@ export default function Home({params}: any) {
 
             {/*ПЕРВЫЙ БЛОК*/}
 
-            <div className={'w-full flex justify-center sm:px-12 bg-white bg-cover relative py-12 sm:py-44'}>
+            <div className={'w-full flex justify-center sm:px-12 bg-white bg-cover relative py-12 sm:py-10'}>
                 <div className={'w-full h-full items-center p-2 sm:px-[20px] sm:sm:max-w-[1440px]'}>
                     <div
                         className={'mt-6 grid sm:border-b-2 border-black border-opacity-10 grid-cols-1 sm:grid-cols-2 gap-8'}>
