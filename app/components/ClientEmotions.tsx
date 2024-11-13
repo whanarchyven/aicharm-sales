@@ -33,8 +33,8 @@ const ClientEmotions: FC<emotionsInterface> = ({emotions}) => {
                 {emotions.map((emotion,counter)=>{
                     const isTop = emotion.rank === maxRank;
                     return(
-                        <div className={'flex flex-col w-full gap-1'}>
-                            <div key={counter} className={'flex flex-row-reverse items-center w-full gap-4'} style={{width:`${emotion.rank+25}%`}}>
+                        <div key={counter} className={'flex flex-col w-full gap-1'}>
+                            <div  className={'flex flex-row-reverse items-center w-full gap-4'} style={{width:`${emotion.rank+25}%`}}>
                                 <p>{emotion.rank}%</p>
                                 <div className={classList('flex-grow rounded-xl h-8 w-full',isTop?'bg-orange':'bg-gray-400')}>
 
