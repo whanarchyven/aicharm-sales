@@ -205,7 +205,7 @@ export default function Home({params}: any) {
                         </div>
                         <div className={'flex flex-col w-full sm:pl-8 sm:py-8 border-black border-opacity-10'}>
                             <div
-                                className={'sm:pl-10 sm:py-6 bg-[#FFE0CE] sm:border-2 border-black border-opacity-10 rounded-xl'}>
+                                className={'sm:pl-10 sm:py-6 bg-[#FFE0CE] sm:border-2 p-5 border-black border-opacity-10 rounded-xl'}>
                                 <div className={''}>
                                     <div className={'flex gap-3 items-start'}>
                                         <div className={'w-[5%] flex justify-start'}>
