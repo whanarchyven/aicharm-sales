@@ -307,7 +307,7 @@ export default function Home({params}: any) {
                                         {summary?.result.clientMbtiTraits?.split('#').splice(1, 100).map((trait: string, counter: number) => {
                                             return (
                                                 <div key={trait}
-                                                     className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
+                                                     className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg !leading-[110%] lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
                                                     {trait}
                                                 </div>
                                             )
@@ -369,7 +369,7 @@ export default function Home({params}: any) {
                                             {summary?.result.managerMbtiTraits?.split('#').splice(1, 100).map((trait: string, counter: number) => {
                                                 return (
                                                     <div key={trait}
-                                                         className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
+                                                         className={classList('sm:px-4 p-2 sm:py-1 sm:text-lg !leading-[110%] lowercase text-xs text-white rounded-full flex items-center justify-center', translateColor(counter + 1))}>
                                                         {trait}
                                                     </div>
                                                 )
