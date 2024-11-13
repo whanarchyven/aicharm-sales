@@ -261,7 +261,7 @@ export default function Home({params}: any) {
                                 <div className={'flex gap-4  items-center'}>
                                     <p className={'text-black sm:text-3xl font-bold'}>{summary?.result.clientName}</p>
                                     <div
-                                        className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
+                                        className={'sm:px-4 sm:py-2 p-1 px-2 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
                                         <p className={'text-white sm:text-lg text-xs font-bold'}>{summary?.result.clientMbti}</p>
                                         <img
                                             className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
@@ -343,7 +343,7 @@ export default function Home({params}: any) {
                                     <div className={'flex gap-3'}>
                                         <p className={'font-bold sm:text-3xl'}>Manager</p>
                                         <div
-                                            className={'sm:px-4 sm:py-2 p-1 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
+                                            className={'sm:px-4 sm:py-2 p-1 px-2 gap-3 flex items-center rounded-full bg-[#1DAEFF]'}>
                                             <p className={'text-white sm:text-lg text-xs font-bold'}>{summary?.result.managerMbti}</p>
                                             <img
                                                 className={'opacity-50 cursor-pointer hover:opacity-100 duration-300 transition-all'}
