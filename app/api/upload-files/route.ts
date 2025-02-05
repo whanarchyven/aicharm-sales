@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const data = url.searchParams.get('url');
 
     const result = await axios.get(
-        `http://84.201.139.211/upload`
+        `http://62.84.122.91/upload`
     );
     // console.log(result.data, `${process.env.BACKEND_URL}/getArticle/`);
     return NextResponse.json(result.data);
