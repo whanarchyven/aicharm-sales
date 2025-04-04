@@ -5,7 +5,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const { id } = params; // Получаем id из параметров маршрута
 
     const result = await axios.get(
-        `http://62.84.122.91/report/${id}` // Используем id в URL для получения данных
+        `http://158.160.4.117/report/${id}` // Используем id в URL для получения данных
     );
 
     return NextResponse.json(result.data);
